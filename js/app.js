@@ -94,7 +94,7 @@ function renderFilters() {
         "button",
         {
           type: "button",
-          class: "chip" + (cat === state.category ? " is-active" : ""),
+          class: `chip${cat === state.category ? " is-active" : ""}`,
           "aria-pressed": String(cat === state.category),
           onclick: () => {
             state.category = cat;
@@ -121,16 +121,16 @@ function postCard(post) {
       " ",
       fmtDate(post.date),
     ),
-    el("h2", {}, el("a", { href: "#/post/" + encodeURIComponent(post.id) }, post.title)),
+    el("h2", {}, el("a", { href: `#/post/${encodeURIComponent(post.id)}` }, post.title)),
     el(
       "p",
       { class: "excerpt" },
-      post.content[0].length > 150 ? post.content[0].slice(0, 147) + "…" : post.content[0],
+      post.content[0].length > 150 ? `${post.content[0].slice(0, 147)}…` : post.content[0],
     ),
     el(
       "ul",
       { class: "tags", "aria-label": "Etiquetas" },
-      post.tags.map((t) => el("li", {}, "#" + t)),
+      post.tags.map((t) => el("li", {}, `#${t}`)),
     ),
     el(
       "p",
@@ -228,13 +228,13 @@ function renderPost(id) {
       el(
         "ul",
         { class: "tags" },
-        post.tags.map((t) => el("li", {}, "#" + t)),
+        post.tags.map((t) => el("li", {}, `#${t}`)),
       ),
       el("div", { class: "post-actions" }, actions),
     ),
     commentsSection(id),
   );
-  document.title = post.title + " · Bitácora de Andrés";
+  document.title = `${post.title} · Bitácora de Andrés`;
   view.querySelector("h1").setAttribute("tabindex", "-1");
   view.querySelector("h1").focus();
 }
@@ -362,7 +362,7 @@ function setupNewPost() {
       ),
     ].slice(0, 6);
     const post = {
-      id: "user-" + Date.now().toString(36),
+      id: `user-${Date.now().toString(36)}`,
       title,
       category,
       tags,
@@ -379,7 +379,7 @@ function setupNewPost() {
     state.category = "Todas";
     state.query = "";
     $("#search").value = "";
-    location.hash = "#/post/" + encodeURIComponent(post.id);
+    location.hash = `#/post/${encodeURIComponent(post.id)}`;
     toast("Entrada publicada");
   });
 }

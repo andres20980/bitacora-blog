@@ -1,6 +1,8 @@
 /* Entradas iniciales del blog. Las que crea el usuario se añaden a estas desde localStorage. */
+// biome-ignore lint/correctness/noUnusedVariables: se usa desde app.js (scripts clásicos con ámbito global compartido)
 const CATEGORIES = ["Desarrollo web", "Seguridad", "Derecho digital", "Vida universitaria"];
 
+// biome-ignore lint/correctness/noUnusedVariables: se usa desde app.js (scripts clásicos con ámbito global compartido)
 const SEED_POSTS = [
   {
     id: "seed-html5-semantica",

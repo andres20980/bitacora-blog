@@ -86,26 +86,35 @@ function toast(message) {
 }
 
 /* ---------- Portada ---------- */
+// Los botones se crean una sola vez y luego solo cambia su estado,
+// para que el foco del teclado no se pierda al pulsar un filtro.
 function renderFilters() {
   const box = $("#filters");
-  box.replaceChildren(
-    ...["Todas", ...CATEGORIES].map((cat) =>
-      el(
-        "button",
-        {
-          type: "button",
-          class: `chip${cat === state.category ? " is-active" : ""}`,
-          "aria-pressed": String(cat === state.category),
-          onclick: () => {
-            state.category = cat;
-            state.visible = PAGE_SIZE;
-            renderList();
+  if (!box.children.length) {
+    box.append(
+      ...["Todas", ...CATEGORIES].map((cat) =>
+        el(
+          "button",
+          {
+            type: "button",
+            class: "chip",
+            "data-cat": cat,
+            onclick: () => {
+              state.category = cat;
+              state.visible = PAGE_SIZE;
+              renderList();
+            },
           },
-        },
-        cat,
+          cat,
+        ),
       ),
-    ),
-  );
+    );
+  }
+  for (const btn of box.children) {
+    const active = btn.dataset.cat === state.category;
+    btn.classList.toggle("is-active", active);
+    btn.setAttribute("aria-pressed", String(active));
+  }
 }
 
 function postCard(post) {
@@ -323,10 +332,7 @@ function setupNewPost() {
   const dlg = $("#dlg-new");
   const form = $("#form-new");
   const select = $("#f-category");
-  select.replaceChildren(
-    el("option", { value: "" }, "Elige una categoría…"),
-    ...CATEGORIES.map((c) => el("option", { value: c }, c)),
-  );
+  select.append(...CATEGORIES.map((c) => el("option", { value: c }, c)));
 
   const setError = (field, msg) => {
     form.querySelector(`.error[data-for="${field}"]`).textContent = msg;
@@ -373,14 +379,17 @@ function setupNewPost() {
         .filter(Boolean),
     };
     state.userPosts.unshift(post);
-    if (!store.write(KEYS.posts, state.userPosts))
-      toast("No se pudo guardar en este navegador; la entrada se perderá al recargar.");
+    const saved = store.write(KEYS.posts, state.userPosts);
     dlg.close();
     state.category = "Todas";
     state.query = "";
     $("#search").value = "";
     location.hash = `#/post/${encodeURIComponent(post.id)}`;
-    toast("Entrada publicada");
+    toast(
+      saved
+        ? "Entrada publicada"
+        : "No se pudo guardar en este navegador; la entrada se perderá al recargar.",
+    );
   });
 }
 
